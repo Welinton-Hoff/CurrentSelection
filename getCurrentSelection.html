@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Document</title>
+
+  <style>
+    ::selection {
+      background: #1E90FF;
+      color: White;
+    }
+
+    ::-moz-selection {
+      background: #1E90FF;
+      color: White;
+    }
+
+    body {
+      padding: 10px;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    h2 {
+      margin: 0;
+      padding: 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    #content {
+      line-height: 1.5em;
+      font-size: 16px;
+      margin-top: 10px;
+      border: 1px #333 solid;
+      padding: 5px;
+      width: 99%;
+    }
+
+    .selectedText {
+      position: relative;
+      background-color: #1E90FF;
+      color: #fff;
+      line-height: 1.2em;
+    }
+
+    .popDiv {
+      background: #1E90FF;
+      color: white;
+      padding: 6px;
+      min-width: 100px;
+      position: absolute;
+      top: 18px;
+      left: 0;
+      border-radius: 4px;
+      box-shadow: 2px 3px 4px #444;
+
+      -webkit-animation: slideIn .5s;
+      animation: slideIn .5s;
+    }
+
+    @-webkit-keyframes slideIn {
+      from {
+        top: 8px;
+        opacity: 0;
+        height: 40px;
+      }
+
+      to {
+        top: 18px;
+        opacity: 1;
+        height: 80px;
+      }
+    }
+
+    @-moz-keyframes slideIn {
+      from {
+        top: 8px;
+        opacity: 0;
+        height: 40px;
+      }
+
+      to {
+        top: 18px;
+        opacity: 1;
+        height: 80px;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        top: 8px;
+        opacity: 0;
+        height: 40px;
+      }
+
+      to {
+        top: 18px;
+        opacity: 1;
+        height: 80px;
+      }
+    }
+  </style>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+    var parentContainerId = "content"
+
+    if (!window.CurrentSelection) {
+      CurrentSelection = {}
+    }
+
+    CurrentSelection.Selector = {}
+
+    //get the current selection
+    CurrentSelection.Selector.getSelected = function () {
+      var sel = '';
+      if (window.getSelection) {
+        sel = window.getSelection()
+      }
+      else if (document.getSelection) {
+        sel = document.getSelection()
+      }
+      else if (document.selection) {
+        sel = document.selection.createRange()
+      }
+      return sel
+    }
+    //function to be called on mouseup
+    CurrentSelection.Selector.mouseup = function () {
+
+      var st = CurrentSelection.Selector.getSelected()
+      if (document.selection && !window.getSelection) {
+        var range = st
+        range.pasteHTML("<span class='selectedText'>" + range.htmlText + "</span>");
+      }
+      else {
+        var range = st.getRangeAt(0)
+        var newNode = document.createElement("span");
+        newNode.setAttribute("class", "selectedText");
+        range.surroundContents(newNode);
+        //
+        var getTitle = newNode.innerHTML;
+        newNode.setAttribute("title", getTitle);
+
+        //
+        var popDiv = document.createElement('span');
+        popDiv.setAttribute('class', 'popDiv');
+        popDiv.innerHTML = getTitle;
+
+        if (newNode.innerHTML.length > 0) {
+          newNode.appendChild(popDiv);
+        }
+        //Remove Selection: To avoid extra text selection in IE  
+        if (window.getSelection) {
+          window.getSelection().removeAllRanges();
+        }
+        else if (document.selection) {
+          document.selection.empty();
+        }
+        //
+      }
+    }
+
+    $(function () {
+
+      $("#" + parentContainerId).on('mouseup', function () {
+        $('span.selectedText').contents().unwrap();
+        $(this).find('span.popDiv').remove();
+      });
+
+      $("#" + parentContainerId).bind("mouseup", CurrentSelection.Selector.mouseup);
+    })
+  </script>
+</head>
+
+<body>
+  <h1>Current Selection text</h1><br><br>
+  <h2>Estratégias em um Novo Paradigma Globalizado</h2>
+  <div id="content">
+    <p>Assim mesmo, a valorização de fatores subjetivos assume importantes posições no estabelecimento de todos os
+      recursos funcionais envolvidos. Por outro lado, a complexidade dos estudos efetuados auxilia a preparação e a
+      composição das diretrizes de desenvolvimento para o futuro. É claro que o aumento do diálogo entre os
+      diferentes setores produtivos exige a precisão e a definição dos paradigmas corporativos. Caros amigos, a
+      constante divulgação das informações representa uma abertura para a melhoria das posturas dos órgãos
+      dirigentes com relação às suas atribuições.</p>
+
+    <p> Do mesmo modo, a expansão dos mercados mundiais maximiza as possibilidades por conta das diversas correntes de
+      pensamento. A nível organizacional, a mobilidade dos capitais internacionais talvez venha a ressaltar a
+      relatividade do fluxo de informações. Nunca é demais lembrar o peso e o significado destes problemas, uma vez
+      que a contínua expansão de nossa atividade cumpre um papel essencial na formulação das direções preferenciais
+      no sentido do progresso. Ainda assim, existem dúvidas a respeito de como o acompanhamento das preferências de
+      consumo obstaculiza a apreciação da importância das condições inegavelmente apropriadas.</p>
+
+    <p>Pensando mais a longo prazo, o consenso sobre a necessidade de qualificação oferece uma interessante oportunidade
+      para verificação dos índices pretendidos. O incentivo ao avanço tecnológico, assim como a execução dos pontos do
+      programa garante a contribuição de um grupo importante na determinação das formas de ação.</p>
+  </div>
+</body>
+
+</html>
